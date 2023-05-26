@@ -1,0 +1,347 @@
+
+<!-- loader END -->
+<!-- Wrapper Start -->
+<div class="wrapper">
+  <div class="iq-sidebar  sidebar-default ">
+    <div id="sidebar-scrollbar">
+      <nav class="iq-sidebar-menu">
+        <ul id="iq-sidebar-toggle" class="iq-menu">
+          <li class="active">
+            <a routerLink="/newsfeed" class=" ">
+              <i class="las la-newspaper"></i><span>Newsfeed</span>
+            </a>
+          </li>
+          <li class="">
+            <a routerLink="/profile" class=" ">
+              <i class="las la-user"></i><span>Profile</span>
+            </a>
+          </li>
+          <li class="">
+            <a routerLink="/message" class=" ">
+              <i style="font-size: 18px" class="ri-messenger-line"></i><span>Message</span>
+            </a>
+          </li>
+          <li class=" ">
+            <a href="" class=" ">
+              <i class="las la-check-circle"></i><span>Todo</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+      <div class="p-5"></div>
+    </div>
+  </div>
+
+  <div class="iq-top-navbar">
+    <div class="iq-navbar-custom">
+      <nav class="navbar navbar-expand-lg navbar-light p-0">
+        <div class="iq-navbar-logo d-flex justify-content-between">
+          <a style="cursor: pointer" routerLink="/newsfeed">
+            <img src="assets/images/logo.png" class="img-fluid" alt="">
+            <span>SocialV</span>
+          </a>
+
+        </div>
+        <div class="iq-search-bar device-search">
+          <form  class="searchbox">
+            <a class="search-link" (change)="searchUserByNameContaining(name.value)"><i class="ri-search-line"></i></a>
+            <input type="text" class="text search-input" #name placeholder="Search here..." (change)="searchUserByNameContaining(name.value)">
+          </form>
+        </div>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                aria-label="Toggle navigation">
+          <i class="ri-menu-3-line"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav  ms-auto navbar-list">
+            <li style="cursor: pointer" routerLink="/newsfeed">
+              <a class=" d-flex align-items-center">
+                <i class="ri-home-line"></i>
+              </a>
+            </li>
+            <li class="nav-item dropdown">
+              <a href="#" class="dropdown-toggle" id="group-drop" data-bs-toggle="dropdown"
+                 aria-haspopup="true" aria-expanded="false">
+                <i class="ri-group-line"></i>
+                <small *ngIf="listRequest.length > 0" style="font-size: 10px;padding: 2px 4px 2px 4px;margin-left: -8px" class="bg-danger rounded-circle text-white">{{listRequest.length}}</small>
+              </a>
+
+              <div class="sub-drop sub-drop-large dropdown-menu" aria-labelledby="group-drop">
+                <div class="card shadow-none m-0">
+                  <div class="card-header d-flex justify-content-between bg-primary">
+                    <div class="header-title">
+                      <h5 class="mb-0 text-white">Friend Request</h5>
+                    </div>
+                    <small class="badge  bg-light text-dark ">{{listRequest.length}}</small>
+                  </div>
+                  <div class="card-body p-0">
+                    <div style="text-align: center;margin-top: 20px" class="col-sm-12" *ngIf="listRequest.length < 1" > <h5 style="color: #c7c2c2">You don't have any request</h5> </div>
+                    <div *ngFor="let friendRequest of listRequest " class="iq-friend-request">
+                      <div
+                        class="iq-sub-card iq-sub-card-big d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center">
+                          <img class="avatar-40 rounded" src="{{friendRequest.avatar}}"
+                               alt="">
+                          <div class="ms-3">
+                            <h6  routerLink="/friend-profile/{{friendRequest.id}}" class="mb-0 ">{{friendRequest.firstName+" "+ friendRequest.lastName}}</h6>
+                          </div>
+                        </div>
+                        <div class="d-flex align-items-center">
+                          <a (click)="confirmRequest(friendRequest.id)"
+                             class="me-3 btn btn-danger rounded">Confirm</a>
+                          <a (click)="deleteRequest(friendRequest.id)"
+                             class="me-3 btn btn-success rounded">Delete Request</a>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="text-center">
+                      <a href="#" class=" btn text-primary">View More Request</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </li>
+            <li class="nav-item dropdown">
+              <a href="#" class="search-toggle   dropdown-toggle" id="notification-drop" data-bs-toggle="dropdown">
+                <i class="ri-notification-4-line"></i>
+                <small  *ngIf="countNotSeen > 0" style="font-size: 10px;padding: 2px 4px 2px 4px;margin-left: -8px" class="bg-danger rounded-circle text-white">{{countNotSeen}}</small>
+              </a>
+              <div class="sub-drop dropdown-menu" aria-labelledby="notification-drop">
+                <div class="card shadow-none m-0">
+                  <div class="card-header d-flex justify-content-between bg-primary">
+                    <div class="header-title bg-primary">
+                      <h5 class="mb-0 text-white">All Notifications</h5>
+                    </div>
+                  </div>
+                  <div  style="min-height: 70px;max-height: 300px;height:auto;overflow: auto" class="card-body p-0">
+                    <div style="text-align: center;margin-top: 20px" class="col-sm-12" *ngIf="listRequest.length < 1" > <h6 style="color: #c7c2c2">you don't have any notifications</h6> </div>
+                    <div *ngFor="let n of listNotification, index as q">
+                      <a *ngIf="countOther[q] > 0 && !n.status" routerLink="/postDetail/{{n?.post?.id}}"  (click)="seenNotification(n)" class="iq-sub-card" style="background-color: #eef2fc;margin-bottom: 3px">
+                        <div class="d-flex align-items-center">
+                          <div class="">
+                            <img class="avatar-40 rounded" src="{{n?.users?.avatar}}" alt="">
+                          </div>
+                          <div class="ms-3 w-100">
+                            <h6 *ngIf="countOther[q] > 1" class="mb-0 ">{{n?.users?.firstName+" "+n?.users?.lastName}} and {{countOther[q] - 1}}
+                              others {{n?.notificationType?.type}}</h6>
+                            <h6 *ngIf="countOther[q] == 1"
+                                class="mb-0 ">{{n?.users?.firstName+" "+n?.users?.lastName}} {{n?.notificationType?.type}}</h6>
+                            <div class="d-flex justify-content-between align-items-center">
+                              <p class="mb-0">{{timeNotificationMoment[q]}}</p>
+                            </div>
+                          </div>
+                        </div>
+                      </a>
+                      <a *ngIf="countOther[q] > 0 && n.status" routerLink="/post-detail/{{n?.post?.id}}" class="iq-sub-card">
+                        <div class="d-flex align-items-center">
+                          <div class="">
+                            <img class="avatar-40 rounded" src="{{n?.users?.avatar}}" alt="">
+                          </div>
+                          <div class="ms-3 w-100">
+                            <h6 *ngIf="countOther[q] > 1" class="mb-0 ">{{n?.users?.firstName+" "+n?.users?.lastName}} and {{countOther[q] - 1}}
+                              others {{n?.notificationType?.type}}</h6>
+                            <h6 *ngIf="countOther[q] == 1"
+                                class="mb-0 ">{{n?.users?.firstName+" "+n?.users?.lastName}} {{n?.notificationType?.type}}</h6>
+                            <div class="d-flex justify-content-between align-items-center">
+                              <p class="mb-0">{{timeNotificationMoment[q]}}</p>
+                            </div>
+                          </div>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </li>
+            <li class="nav-item dropdown">
+              <a href="#" class="dropdown-toggle" id="mail-drop" data-bs-toggle="dropdown" aria-haspopup="true"
+                 aria-expanded="false">
+                <i class="ri-messenger-line"></i>
+              </a>
+              <div class="sub-drop dropdown-menu" aria-labelledby="mail-drop">
+                <div class="card shadow-none m-0">
+                  <div class="card-header d-flex justify-content-between bg-primary">
+                    <div class="header-title bg-primary">
+                      <h5 class="mb-0 text-white">All Message</h5>
+                    </div>
+                    <small class="badge bg-light text-dark">{{listAllConversation.length}}</small>
+                  </div>
+                  <div style="min-height: 70px;max-height: 300px;height:auto;overflow: auto" class="card-body p-0">
+                    <div style="text-align: center;margin-top: 20px" class="col-sm-12" *ngIf="listAllConversation.length < 1">
+                      <h6 style="color: #c7c2c2">You don't have any message</h6></div>
+                    <a *ngFor="let conversation of listAllConversation, index as i" class="iq-sub-card">
+                      <div class="d-flex  align-items-center" (click)="getChatRoom(conversation)">
+                        <div class="">
+                          <img class="avatar-40 rounded" src="{{listAvatarMember[i]}}" alt="">
+                        </div>
+                        <div class=" w-100 ms-3">
+                          <h6 class="mb-0 ">{{listMemberName[i]}}</h6>
+                        </div>
+                      </div>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </li>
+            <li class="nav-item dropdown">
+              <a href="#" class="   d-flex align-items-center dropdown-toggle" id="drop-down-arrow"
+                 data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <img src="{{user.avatar}}" class="img-fluid rounded-circle me-3" alt="user">
+                <div class="caption">
+                  <h6 class="mb-0 line-height">{{user.firstName+" "+user.lastName}}</h6>
+                </div>
+              </a>
+              <div class="sub-drop dropdown-menu caption-menu" aria-labelledby="drop-down-arrow">
+                <div class="card shadow-none m-0">
+                  <div class="card-header  bg-primary">
+                    <div class="header-title">
+                      <h5 class="mb-0 text-white">Hello {{user.firstName+" "+user.lastName}}</h5>
+                      <span class="text-white font-size-12">Available</span>
+                    </div>
+                  </div>
+                  <div class="card-body p-0 ">
+                    <a class="iq-sub-card iq-bg-primary-hover">
+                      <div class="d-flex align-items-center">
+                        <div class="rounded card-icon bg-soft-primary">
+                          <i class="ri-file-user-line"></i>
+                        </div>
+                        <div class="ms-3" routerLink="/profile">
+                          <h6 class="mb-0 ">My Profile</h6>
+                          <p class="mb-0 font-size-12">View personal profile details.</p>
+                        </div>
+                      </div>
+                    </a>
+                    <a class="iq-sub-card iq-bg-warning-hover">
+                      <div class="d-flex align-items-center">
+                        <div class="rounded card-icon bg-soft-warning">
+                          <i class="ri-profile-line"></i>
+                        </div>
+                        <div routerLink="/edit-profile" class="ms-3">
+                          <h6 class="mb-0 ">Edit Profile</h6>
+                          <p class="mb-0 font-size-12">Modify your personal details.</p>
+                        </div>
+                      </div>
+                    </a>
+
+                    <a routerLink="/privacy" class="iq-sub-card iq-bg-danger-hover">
+                      <div class="d-flex align-items-center">
+                        <div class="rounded card-icon bg-soft-danger">
+                          <i class="ri-lock-line"></i>
+                        </div>
+                        <div class="ms-3">
+                          <h6 class="mb-0 ">Privacy Settings</h6>
+                          <p class="mb-0 font-size-12">Control your privacy parameters.
+                          </p>
+                        </div>
+                      </div>
+                    </a>
+                    <div (click)="logOut()" class="d-inline-block w-100 text-center p-3">
+                      <a class="btn btn-primary iq-sign-btn" role="button">Sign
+                        out<i class="ri-login-box-line ms-2"></i></a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+  </div>
+  <div class="right-sidebar-mini active-menu ">
+    <div class="right-sidebar-panel p-0">
+      <div class="card shadow-none">
+        <div class="card-body p-0">
+          <div class="media-height p-3" data-scrollbar="init">
+            <div *ngFor="let f of listFriend" class="d-flex align-items-center mb-4">
+              <div *ngIf="f.checkOn" class="iq-profile-avatar status-online">
+                <img class="rounded-circle avatar-50" src="{{f?.avatar}}">
+              </div>
+              <div *ngIf="!f.checkOn" class="iq-profile-avatar status-offline">
+                <img class="rounded-circle avatar-50" src="{{f?.avatar}}">
+              </div>
+              <div class="ms-3">
+                <h6 class="mb-0">{{f?.firstName+" "+f?.lastName}}</h6>
+                <p *ngIf="f.checkOn" class="mb-0">Just Now</p>
+                <p *ngIf="!f.checkOn" class="mb-0">Offline</p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="margin-left:12.5%" id="content-page" class="content-page">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-10 row m-0 p-0">
+          <h4 *ngIf="listSearchFriend.length > 0" style="margin-bottom: 20px">Result for : "{{search}}"</h4>
+          <h4 *ngIf="listSearchFriend.length < 1" style="margin-bottom: 20px">No Result for : "{{search}}"</h4>
+          <div class="card p-0"  >
+            <div class="card-body p-0">
+              <ul class="todo-task-lists m-0 p-0">
+                <div *ngFor="let s of listSearchFriend, index as i">
+                  <li  class="d-flex align-items-center p-3" *ngIf="s.id !== user.id"    >
+                    <div style="cursor: pointer" routerLink="/friend-profile/{{s.id}}" class="user-img img-fluid"><img src="{{s.avatar}}" alt="story-img" class="rounded-circle avatar-60"></div>
+                    <div class="d-flex align-items-center justify-content-between w-100">
+                      <div class="ms-3" >
+                        <h5 style="cursor: pointer" routerLink="/friend-profile/{{s.id}}" class="d-inline-block">{{s.firstName+" "+s.lastName}}</h5>
+                        <p *ngIf="listMutualFriend[i] > 0" class="mb-0">{{listMutualFriend[i]}} Mutual Friends</p>
+                      </div>
+                    </div>
+                  </li>
+                </div>
+
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- offcanvas start -->
+
+<div class="offcanvas offcanvas-bottom share-offcanvas" tabindex="-1" id="share-btn"
+     aria-labelledby="shareBottomLabel">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title" id="shareBottomLabel">Share</h5>
+    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body small">
+    <div class="d-flex flex-wrap align-items-center">
+      <div class="text-center me-3 mb-3">
+        <img src="assets/images/icon/08.png" class="img-fluid rounded mb-2" alt="">
+        <h6>Facebook</h6>
+      </div>
+      <div class="text-center me-3 mb-3">
+        <img src="assets/images/icon/09.png" class="img-fluid rounded mb-2" alt="">
+        <h6>Twitter</h6>
+      </div>
+      <div class="text-center me-3 mb-3">
+        <img src="assets/images/icon/10.png" class="img-fluid rounded mb-2" alt="">
+        <h6>Instagram</h6>
+      </div>
+      <div class="text-center me-3 mb-3">
+        <img src="assets/images/icon/11.png" class="img-fluid rounded mb-2" alt="">
+        <h6>Google Plus</h6>
+      </div>
+      <div class="text-center me-3 mb-3">
+        <img src="assets/images/icon/13.png" class="img-fluid rounded mb-2" alt="">
+        <h6>In</h6>
+      </div>
+      <div class="text-center me-3 mb-3">
+        <img src="assets/images/icon/12.png" class="img-fluid rounded mb-2" alt="">
+        <h6>YouTube</h6>
+      </div>
+    </div>
+  </div>
+</div>
+
+
